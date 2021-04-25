@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductStoreRequest;
+use App\Http\Requests\ProductUpdateRequest;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,7 @@ class ProductController extends Controller
         return $this->productRepository->all();
     }
 
-    public function store(Request $request)
+    public function store(ProductStoreRequest $request)
     {
         return $this->productRepository->create($request);
     }
@@ -31,7 +33,7 @@ class ProductController extends Controller
         return $this->productRepository->find($id);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProductUpdateRequest $request, $id)
     {
         return $this->productRepository->update($request, $id);
     }

@@ -46,10 +46,10 @@ class ClientRepository implements ClientRepositoryInterface
             ], 404);
         }
 
-        $request->name ? $client->name = $request->name : false;
-        $request->cpf ? $client->cpf = $request->cpf : false;
-        $request->gender_id ? $client->gender_id = $request->gender_id : false;
-        $request->email ? $client->email = $request->email : false;
+        if ($request->name) $client->name = $request->name;
+        if ($request->cpf) $client->cpf = $request->cpf;
+        if ($request->gender_id) $client->gender_id = $request->gender_id;
+        if ($request->email) $client->email = $request->email;
 
         $client->save();
 
