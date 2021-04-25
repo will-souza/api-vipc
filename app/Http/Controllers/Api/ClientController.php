@@ -3,8 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ClientStoreRequest;
+use App\Http\Requests\ClientUpdateRequest;
 use App\Repositories\ClientRepository;
-use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
@@ -21,7 +22,7 @@ class ClientController extends Controller
         return $this->clientRepository->all();
     }
 
-    public function store(Request $request)
+    public function store(ClientStoreRequest $request)
     {
         return $this->clientRepository->create($request);
     }
@@ -31,7 +32,7 @@ class ClientController extends Controller
         return $this->clientRepository->find($id);
     }
 
-    public function update(Request $request, $id)
+    public function update(ClientUpdateRequest $request, $id)
     {
         return $this->clientRepository->update($request, $id);
     }

@@ -4,30 +4,74 @@
 namespace App\Repositories;
 
 
+use App\Http\Requests\ClientStoreRequest;
+use App\Http\Requests\ClientUpdateRequest;
+use App\Models\Client;
+
 class ClientRepository implements ClientRepositoryInterface
 {
     public function all()
     {
-        //
+        return Client::paginate(20);
     }
 
     public function find($id)
     {
-        //
+        return Client::find($id);
     }
 
-    public function create($customer)
+    public function create(ClientStoreRequest $request)
     {
-        //
+        $client = new Client();
+
+        $client->name = $request->name;
+        $client->cpf = $request->cpf;
+        $client->gender_id = $request->gender_id;
+        $client->email = $request->email;
+
+        $client->save();
+
+        return response(['errors' => [],
+            'data' => $client
+        ], 201);
     }
 
-    public function update($customer)
+    public function update(ClientUpdateRequest $request, $id)
     {
-        //
+        $client = Client::find($id);
+
+        if (!$client) {
+            return response(['errors' => ['id' => 'Invalid id or client not found'],
+                'data' => []
+            ], 404);
+        }
+
+        $request->name ? $client->name = $request->name : false;
+        $request->cpf ? $client->cpf = $request->cpf : false;
+        $request->gender_id ? $client->gender_id = $request->gender_id : false;
+        $request->email ? $client->email = $request->email : false;
+
+        $client->save();
+
+        return response(['errors' => [],
+            'data' => $client
+        ], 200);
     }
 
     public function delete($id)
     {
-        //
+        $client = Client::find($id);
+
+        if (!$client) {
+            return response(['errors' => ['id' => 'Invalid id or client not found'],
+                'data' => []
+            ], 404);
+        }
+
+        $client->delete();
+
+        return response(['errors' => [],
+            'data' => 'The client has been deleted'
+        ], 200);
     }
 }
