@@ -7,10 +7,14 @@ namespace App\Repositories;
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\OrderResource;
+use App\Mail\OrderMail;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use App\Services\ReportService;
+use http\Env\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Mail;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Classes\Party;
@@ -92,52 +96,26 @@ class OrderRepository implements OrderRepositoryInterface
         return new OrderResource($order);
     }
 
-    public function report($request, $id)
+    public function sendmail($id)
     {
         $order = Order::findOrFail($id);
-        $client = $order->client;
-        $products = $order->products;
 
-        $seller = new Party([
-            'name' => 'William Souza',
-            'phone' => '(11) 96497-7741',
-            'custom_fields' => [
-                'email' => 'wgui@live.com',
-                'CPF' => '111.111.111-99',
-            ],
-        ]);
+        $data = [
+            'order' => $order,
+            'client' => $order->client,
+            'products' => $order->products
+        ];
 
-        $customer = new Buyer([
-            'name' => $client->name,
-            'custom_fields' => [
-                'email' => $client->email,
-                'CPF' => $client->cpf,
-            ],
-        ]);
-
-        $items = [];
-
-        foreach ($products as $product) {
-            $items[] = (new InvoiceItem())
-                ->title($product->name)
-                ->pricePerUnit($product->price / 100)
-                ->quantity($product->pivot->quantity);
+        try {
+            Mail::to($order->client->email)->send(new OrderMail($data));
+            return response(['data' => 'Email successfully sent']);
+        } catch (\Exception $e) {
+            return response(['data' => 'Email not sent'], 422);
         }
+    }
 
-        $invoice = Invoice::make()
-            ->seller($seller)
-            ->buyer($customer)
-            ->dateFormat('d/m/Y')
-            ->currencySymbol('R$')
-            ->currencyCode('BRL')
-            ->currencyFormat('{SYMBOL} {VALUE}')
-            ->currencyDecimalPoint(',')
-            ->shipping(15.99)
-            ->logo(public_path('images/logo_vipcommerce.png'))
-            ->addItems($items);
-
-        if ($request->isMethod('GET')) return $invoice->download();
-
-        return $invoice->stream();
+    public function report(ReportService $reportService, $id)
+    {
+        return $reportService->create($id, 'download');
     }
 }

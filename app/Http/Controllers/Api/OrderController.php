@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Mail\OrderMail;
 use App\Repositories\OrderRepository;
+use App\Services\ReportService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -45,11 +48,11 @@ class OrderController extends Controller
 
     public function sendmail($id)
     {
-        //
+        return $this->orderRepository->sendmail($id);
     }
 
-    public function report(Request $request, $id)
+    public function report(ReportService $reportService, $id)
     {
-        return $this->orderRepository->report($request, $id);
+        return $this->orderRepository->report($reportService, $id);
     }
 }

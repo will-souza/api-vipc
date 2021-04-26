@@ -21,5 +21,5 @@ Route::apiResource('clients', ClientController::class)->names('clients');
 Route::apiResource('products', ProductController::class)->names('products');
 
 Route::apiResource('orders', OrderController::class)->names('orders');
-Route::get('orders/{id}/sendmail', [OrderController::class, 'sendmail'])->name('orders.sendmail');
+Route::post('orders/{id}/sendmail', [OrderController::class, 'sendmail'])->name('orders.sendmail');
 Route::match(['get', 'post'], 'orders/{id}/report', [OrderController::class, 'report'])->name('orders.report');

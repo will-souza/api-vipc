@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Services\ReportService;
 
 interface OrderRepositoryInterface
 {
@@ -17,5 +18,7 @@ interface OrderRepositoryInterface
 
     public function delete($id);
 
-    public function report($request, $id);
+    public function sendmail($id);
+
+    public function report(ReportService $reportService, $id);
 }

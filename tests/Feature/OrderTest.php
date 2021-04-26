@@ -179,4 +179,16 @@ class OrderTest extends TestCase
         $this->post(route('orders.report', 1))
         ->assertStatus(200);
     }
+
+    public function test_can_send_email()
+    {
+        Order::factory()->create();
+        Product::factory()->create();
+        OrderProduct::factory(5)->create();
+
+        $this->post(route('orders.sendmail', 1))
+            ->assertJson([
+                'data' => 'Email successfully sent'
+            ]);
+    }
 }
