@@ -17,7 +17,15 @@ class ClientRepository implements ClientRepositoryInterface
 
     public function find($id)
     {
-        return Client::find($id);
+        $client = Client::find($id);
+
+        if (!$client) {
+            return response(['errors' => ['id' => 'Client not found'],
+                'data' => []
+            ], 404);
+        }
+
+        return $client;
     }
 
     public function create(ClientStoreRequest $request)

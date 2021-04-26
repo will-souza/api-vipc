@@ -26,7 +26,6 @@ class OrderRepository implements OrderRepositoryInterface
             ], 404);
         }
 
-
         return $order;
     }
 

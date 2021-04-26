@@ -17,7 +17,15 @@ class ProductRepository implements ProductRepositoryInterface
 
     public function find($id)
     {
-        return Product::find($id);
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response(['errors' => ['id' => 'Product not found'],
+                'data' => []
+            ], 404);
+        }
+
+        return $product;
     }
 
     public function create(ProductStoreRequest $request)
