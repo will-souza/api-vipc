@@ -12,7 +12,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $appends = ['total'];
+    protected $appends = ['total', 'payment_method'];
 
     public function client(): BelongsTo
     {
@@ -34,5 +34,9 @@ class Order extends Model
         return $this->products()->sum(DB::raw('quantity * price'));
     }
 
+    public function getPaymentMethodAttribute()
+    {
+        return PaymentMethod::find($this->payment_method_id)->name;
+    }
 
 }
