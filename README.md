@@ -14,16 +14,31 @@ API Desenvolvida em Laravel com o propósito de ser consumida por uma aplicaçã
 composer install
 cp .env.example .env
 php artisan key:generate
+```
 
-# criação de banco para executar os testes caso esteja em ambiente de desenvolvimento
+Criação de banco para executar os testes caso esteja em ambiente de desenvolvimento
+```shell
 touch database/test.sqlite
+```
 
-# antes de passar para o próximo comando, realize as devidas configurações do projeto no arquivo .env
+Antes de passar para o próximo comando, realize as devidas configurações do projeto no arquivo .env
 
-# caso esteja em ambiente de desenvolvimento, você poderá passar "--seed" para criar as factories
+Caso esteja em ambiente de desenvolvimento, você poderá passar "--seed" para criar as factories
+```shell
 php artisan migrate
+```
+Caso esteja em ambiente de produção, existem seeds para métodos de pagamento e gêneros
+```shell
+php artisan db:seed --class=PaymentMethodSeeder
+php artisan db:seed --class=GenderSeeder
 ```
 
 ### Documentação Postman
 
 https://documenter.getpostman.com/view/15544534/TzJycvz4
+
+### Testes
+Para execução dos testes, basta executar o seguinte comando:
+```shell
+php artisan test
+```
