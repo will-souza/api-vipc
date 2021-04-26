@@ -6,30 +6,27 @@ namespace App\Repositories;
 
 use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderProduct;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderRepository implements OrderRepositoryInterface
 {
-    public function all()
+    public function all(): AnonymousResourceCollection
     {
-        return Order::with('products')->paginate(20);
+        return OrderResource::collection(Order::with('products')->paginate(20));
     }
 
-    public function find($id)
+    public function find($id): OrderResource
     {
-        $order = Order::with('products')->find($id);
+        $order = Order::with('products')->findOrFail($id);
 
-        if (!$order) {
-            return response(['errors' => ['id' => 'Order not found'],
-                'data' => []
-            ], 404);
-        }
-
-        return $order;
+        return new OrderResource($order);
     }
 
-    public function create(OrderStoreRequest $request)
+    public function create(OrderStoreRequest $request): OrderResource
     {
         $order = new Order();
 
@@ -50,20 +47,12 @@ class OrderRepository implements OrderRepositoryInterface
 
         OrderProduct::insert($orderProducts);
 
-        return response(['errors' => [],
-            'data' => $order
-        ], 201);
+        return new OrderResource($order);
     }
 
-    public function update(OrderUpdateRequest $request, $id)
+    public function update(OrderUpdateRequest $request, $id): OrderResource
     {
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response(['errors' => ['id' => 'Invalid id or order not found'],
-                'data' => []
-            ], 404);
-        }
+        $order = Order::findOrFail($id);
 
         if ($request->observation) $order->observation = $request->observation;
         if ($request->client_id) $order->client_id = $request->client_id;
@@ -86,26 +75,16 @@ class OrderRepository implements OrderRepositoryInterface
 
         $order->save();
 
-        return response(['errors' => [],
-            'data' => $order
-        ], 200);
+        return new OrderResource($order);
     }
 
-    public function delete($id)
+    public function delete($id): OrderResource
     {
-        $order = Order::find($id);
-
-        if (!$order) {
-            return response(['errors' => ['id' => 'Invalid id or order not found'],
-                'data' => []
-            ], 404);
-        }
+        $order = Order::findOrFail($id);
 
         $order->products()->detach();
         $order->delete();
 
-        return response(['errors' => [],
-            'data' => 'The order has been deleted'
-        ], 200);
+        return new OrderResource($order);
     }
 }

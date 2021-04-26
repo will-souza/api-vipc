@@ -6,26 +6,21 @@ namespace App\Repositories;
 
 use App\Http\Requests\ProductStoreRequest;
 use App\Http\Requests\ProductUpdateRequest;
+use App\Http\Resources\ProductResource;
 use App\Models\Product;
 
 class ProductRepository implements ProductRepositoryInterface
 {
     public function all()
     {
-        return Product::paginate(20);
+        return ProductResource::collection(Product::paginate(20));
     }
 
     public function find($id)
     {
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
-        if (!$product) {
-            return response(['errors' => ['id' => 'Product not found'],
-                'data' => []
-            ], 404);
-        }
-
-        return $product;
+        return new ProductResource($product);
     }
 
     public function create(ProductStoreRequest $request)
@@ -39,20 +34,12 @@ class ProductRepository implements ProductRepositoryInterface
 
         $product->save();
 
-        return response(['errors' => [],
-            'data' => $product
-        ], 201);
+        return new ProductResource($product);
     }
 
     public function update(ProductUpdateRequest $request, $id)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response(['errors' => ['id' => 'Invalid id or client not found'],
-                'data' => []
-            ], 404);
-        }
+        $product = Product::findOrFail($id);
 
         if ($request->name) $product->name = $request->name;
         if ($request->color) $product->color = $request->color;
@@ -61,25 +48,14 @@ class ProductRepository implements ProductRepositoryInterface
 
         $product->save();
 
-        return response(['errors' => [],
-            'data' => $product
-        ], 200);
+        return new ProductResource($product);
     }
 
     public function delete($id)
     {
-        $product = Product::find($id);
-
-        if (!$product) {
-            return response(['errors' => ['id' => 'Invalid id or product not found'],
-                'data' => []
-            ], 404);
-        }
-
+        $product = Product::findOrFail($id);
         $product->delete();
 
-        return response(['errors' => [],
-            'data' => 'The product has been deleted'
-        ], 200);
+        return new ProductResource($product);
     }
 }

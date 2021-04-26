@@ -6,29 +6,24 @@ namespace App\Repositories;
 
 use App\Http\Requests\ClientStoreRequest;
 use App\Http\Requests\ClientUpdateRequest;
+use App\Http\Resources\ClientResource;
 use App\Models\Client;
 
 class ClientRepository implements ClientRepositoryInterface
 {
-    public function all()
+    public function all(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        return Client::paginate(20);
+        return ClientResource::collection(Client::paginate(20));
     }
 
-    public function find($id)
+    public function find($id): ClientResource
     {
-        $client = Client::find($id);
+        $client = Client::findOrFail($id);
 
-        if (!$client) {
-            return response(['errors' => ['id' => 'Client not found'],
-                'data' => []
-            ], 404);
-        }
-
-        return $client;
+        return new ClientResource($client);
     }
 
-    public function create(ClientStoreRequest $request)
+    public function create(ClientStoreRequest $request): ClientResource
     {
         $client = new Client();
 
@@ -39,20 +34,12 @@ class ClientRepository implements ClientRepositoryInterface
 
         $client->save();
 
-        return response(['errors' => [],
-            'data' => $client
-        ], 201);
+        return new ClientResource($client);
     }
 
-    public function update(ClientUpdateRequest $request, $id)
+    public function update(ClientUpdateRequest $request, $id): ClientResource
     {
-        $client = Client::find($id);
-
-        if (!$client) {
-            return response(['errors' => ['id' => 'Invalid id or client not found'],
-                'data' => []
-            ], 404);
-        }
+        $client = Client::findOrFail($id);
 
         if ($request->name) $client->name = $request->name;
         if ($request->cpf) $client->cpf = $request->cpf;
@@ -61,25 +48,14 @@ class ClientRepository implements ClientRepositoryInterface
 
         $client->save();
 
-        return response(['errors' => [],
-            'data' => $client
-        ], 200);
+        return new ClientResource($client);
     }
 
-    public function delete($id)
+    public function delete($id): ClientResource
     {
-        $client = Client::find($id);
-
-        if (!$client) {
-            return response(['errors' => ['id' => 'Invalid id or client not found'],
-                'data' => []
-            ], 404);
-        }
-
+        $client = Client::findOrFail($id);
         $client->delete();
 
-        return response(['errors' => [],
-            'data' => 'The client has been deleted'
-        ], 200);
+        return new ClientResource($client);
     }
 }
