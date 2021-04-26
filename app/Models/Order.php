@@ -6,10 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
     use HasFactory;
+
+    protected $appends = ['total'];
 
     public function client(): BelongsTo
     {
@@ -21,8 +24,15 @@ class Order extends Model
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function products(): HasMany
+    public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->belongsToMany(Product::class);
     }
+
+    public function getTotalAttribute()
+    {
+        return $this->products()->sum(DB::raw('quantity * price'));
+    }
+
+
 }

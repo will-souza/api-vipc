@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrderStoreRequest;
+use App\Http\Requests\OrderUpdateRequest;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,7 @@ class OrderController extends Controller
         return $this->orderRepository->all();
     }
 
-    public function store(Request $request)
+    public function store(OrderStoreRequest $request)
     {
         return $this->orderRepository->create($request);
     }
@@ -31,7 +33,7 @@ class OrderController extends Controller
         return $this->orderRepository->find($id);
     }
 
-    public function update(Request $request, $id)
+    public function update(OrderUpdateRequest $request, $id)
     {
         return $this->orderRepository->update($request, $id);
     }
