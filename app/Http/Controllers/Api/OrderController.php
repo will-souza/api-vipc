@@ -42,4 +42,14 @@ class OrderController extends Controller
     {
         return $this->orderRepository->delete($id);
     }
+
+    public function sendmail($id)
+    {
+        //
+    }
+
+    public function report(Request $request, $id)
+    {
+        return $this->orderRepository->report($request, $id);
+    }
 }

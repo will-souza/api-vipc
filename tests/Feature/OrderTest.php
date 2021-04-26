@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Client;
 use App\Models\Gender;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\PaymentMethod;
 use App\Models\Product;
 use Carbon\Carbon;
@@ -167,5 +168,15 @@ class OrderTest extends TestCase
                     'total' => 0
                 ]
             ]);
+    }
+
+    public function test_can_show_report()
+    {
+        Order::factory()->create();
+        Product::factory()->create();
+        OrderProduct::factory(5)->create();
+
+        $this->post(route('orders.report', 1))
+        ->assertStatus(200);
     }
 }

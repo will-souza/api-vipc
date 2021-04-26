@@ -21,14 +21,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(PaymentMethodSeeder::class);
-        $this->call(GenderSeeder::class);
+//        $this->call(PaymentMethodSeeder::class);
+//        $this->call(GenderSeeder::class);
 
-//        Gender::factory(2)->create();
-//        Client::factory()->create();
-//        Product::factory(10)->create();
-//        PaymentMethod::factory(3)->create();
-//        Order::factory(5)->create();
-//        OrderProduct::factory(10)->create();
+        Gender::factory(2)->create();
+        Client::factory()->create();
+        Product::factory(10)->create();
+        PaymentMethod::factory(3)->create();
+        Order::factory(5)->create();
+        OrderProduct::factory(20)->create();
     }
 }

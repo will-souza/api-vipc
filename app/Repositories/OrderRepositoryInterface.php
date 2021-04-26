@@ -16,4 +16,6 @@ interface OrderRepositoryInterface
     public function update(OrderUpdateRequest $request, $id);
 
     public function delete($id);
+
+    public function report($request, $id);
 }
