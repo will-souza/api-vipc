@@ -31,7 +31,7 @@ class OrderStoreRequest extends FormRequest
             'payment_method_id' => 'required|integer|exists:payment_methods,id',
             'products' => 'required|array|size:1',
             'products.*.product_id' => 'required|integer|exists:products,id',
-            'products.*.quantity' => 'required|integer',
+            'products.*.quantity' => 'required|integer|min:1',
         ];
     }
 
